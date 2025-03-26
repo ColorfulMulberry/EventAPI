@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 // import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.example.demo.model.Event;
 import com.example.demo.service.DemoService;
 
-// @RequestMapping("/json")   add this to change the URI path
+// @RequestMapping("/json")   add this below @RestController to change the URI path
 @RestController
 public class DemoController {
 
@@ -55,8 +57,8 @@ public class DemoController {
 
     // update an event given an event id
     // name, description, and date are optional
-    @PostMapping(path = "/updateEvent", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> updateEvent(
+    @PutMapping(path = "/updateEvent", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Event> updateEvent(
             @RequestParam("id") Integer id,
             @RequestParam(value = "name") Optional<String> name,
             @RequestParam(value = "desc") Optional<String> desc,
@@ -74,4 +76,14 @@ public class DemoController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null); // change body to created event
     }
 
+    // delete an event given an event id
+    @DeleteMapping(path = "/removeEvent")
+    public ResponseEntity<Object> removeEvent(@RequestParam("id") Integer id) {
+        boolean res = demoService.deleteEvent(id);
+
+        if (res)
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body(null);
+        else
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+    }
 }

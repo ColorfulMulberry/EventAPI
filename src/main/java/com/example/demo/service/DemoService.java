@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +29,11 @@ public class DemoService {
     // find an event in the list of events given an id
     public Optional<Event> getEvent(Integer id) {
         Optional<Event> optional = Optional.empty();
+
+        if (id <= 0 || id > curId) { // not in range of valid ids
+            return optional;
+        }
+
         for (Event event : events) {
             if (id == event.getId()) {
                 optional = Optional.of(event);
@@ -60,7 +66,7 @@ public class DemoService {
             Optional<String> date) {
         Optional<Event> optional = Optional.empty();
 
-        if (id <= 0 && id > curId) { // not in range of valid ids
+        if (id <= 0 || id > curId) { // not in range of valid ids
             return optional;
         }
 
@@ -85,5 +91,23 @@ public class DemoService {
             }
         }
         return optional;
+    }
+
+    // remove an existing event from the event list given its id
+    public boolean deleteEvent(Integer id) {
+        if (id <= 0 || id > curId) { // not in range of valid ids
+            return false;
+        }
+
+        Iterator<Event> iterator = events.iterator();
+        while (iterator.hasNext()) {
+            Event event = iterator.next();
+            if (id == event.getId()) {
+                iterator.remove();
+                return true;
+            }
+        }
+
+        return false;
     }
 }
