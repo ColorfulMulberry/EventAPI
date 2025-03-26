@@ -16,7 +16,7 @@ A small project for learning how to implement REST endpoints in Spring Boot/Java
 
 6. Run the image to start up the microservice, it will be named `eventapi-server` or `eventapi-master-server`.
 
-7. Access the API endpoints using `http://localhost:8080/[method]?[parameter]=[value]&[parameter2]=[value]`.
+7. Access the API endpoints using `http://localhost:8080/[method]?[parameter]=[value]&[parameter2]=[value]`. [Postman](https://www.postman.com/downloads/) is recommended for this in order to specify HTTP methods other than GET.
 
 ## API Endpoints
 
