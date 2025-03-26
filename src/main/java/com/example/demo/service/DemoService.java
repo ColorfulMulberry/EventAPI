@@ -2,6 +2,9 @@ package com.example.demo.service;
 
 import com.example.demo.model.Event;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -17,9 +20,9 @@ public class DemoService {
     public DemoService() {
         events = new ArrayList<>();
 
-        events.add(new Event(curId++, "Party", "Party at the lodge."));
-        events.add(new Event(curId++, "April Fools Day", "Pranks planned for friends."));
-        events.add(new Event(curId++, "Neighbour Birthday", "Attend neighbour's birthday party."));
+        events.add(new Event(curId++, "Party", "Party at the lodge.", "2025-03-30"));
+        events.add(new Event(curId++, "April Fools Day", "Pranks planned for friends.", "2025-04-01"));
+        events.add(new Event(curId++, "Neighbour Birthday", "Attend neighbour's birthday party.", "2025-04-03"));
     }
 
     // find an event in the list of events given an id
@@ -35,20 +38,26 @@ public class DemoService {
     }
 
     // add an event to the list given an event name and description
-    public Optional<Event> addEvent(String eventName, String description) {
+    public Optional<Event> addEvent(String eventName, String description, String date) {
         Optional<Event> optional = Optional.empty();
 
-        // implement a date attribute and validate it here
-
-        Event newEvent = new Event(curId++, eventName, description);
-        events.add(newEvent);
-        optional = Optional.of(newEvent);
+        // validate the date follows ISO-8601 standard ( e.g. "2022-05-30" or
+        // "2029-11-07+05:00" )
+        try {
+            LocalDate.parse(date, DateTimeFormatter.ISO_DATE);
+            Event newEvent = new Event(curId++, eventName, description, date);
+            events.add(newEvent);
+            optional = Optional.of(newEvent);
+        } catch (DateTimeParseException e) {
+            return optional;
+        }
 
         return optional;
     }
 
     // update an existing event given its id, its name and/or description
-    public Optional<Event> updateEvent(Integer id, Optional<String> eventName, Optional<String> description) {
+    public Optional<Event> updateEvent(Integer id, Optional<String> eventName, Optional<String> description,
+            Optional<String> date) {
         Optional<Event> optional = Optional.empty();
 
         if (id <= 0 && id > curId) { // not in range of valid ids
@@ -62,6 +71,14 @@ public class DemoService {
                     event.setName(eventName.orElseThrow());
                 if (description.isPresent())
                     event.setDescription(description.orElseThrow());
+                if (date.isPresent()) {
+                    try { // validate date
+                        LocalDate.parse(date.orElseThrow(), DateTimeFormatter.ISO_DATE);
+                        event.setDate(date.orElseThrow());
+                    } catch (DateTimeParseException e) {
+                        return optional;
+                    }
+                }
 
                 optional = Optional.of(event);
                 return optional;
